@@ -8,9 +8,9 @@ const ic = { size: 20, strokeWidth: 2, 'aria-hidden': true }
 export default function Sidebar({ perfil, rol, esAdmin, puedeEditar, onNuevo, onSalir, onRespaldo }) {
   const items = [
     ['/dashboard', 'Dashboard', <IconDash key="d" />],
-    ['/colaboradores', 'Colaboradores', <IconEnc key="c" />],
+    ...(puedeEditar ? [['/colaboradores', 'Colaboradores', <IconEnc key="c" />]] : []),
   ].concat(esAdmin ? [['/usuarios', 'Usuarios', <Users key="u" {...ic} />], ['/roles', 'Roles', <ShieldCheck key="r" {...ic} />]] : [])
-    .concat([['/perfil', 'Mi perfil', <UserRound key="p" {...ic} />]])
+    .concat(puedeEditar ? [['/perfil', 'Mi perfil', <UserRound key="p" {...ic} />]] : [])
   const nombre = [perfil.name, perfil.last_name].filter(Boolean).join(' ') || perfil.email
 
   return (

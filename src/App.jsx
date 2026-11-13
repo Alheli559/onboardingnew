@@ -13,8 +13,10 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<Panel />}>
           <Route path="/dashboard" element={<PaginaDashboard />} />
-          <Route path="/colaboradores" element={<PaginaColaboradores />} />
-          <Route path="/perfil" element={<Perfil />} />
+          <Route element={<RoleGuard roles={['Admin', 'Editor']} />}>
+            <Route path="/colaboradores" element={<PaginaColaboradores />} />
+            <Route path="/perfil" element={<Perfil />} />
+          </Route>
           <Route element={<RoleGuard roles={['Admin']} />}>
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/roles" element={<Roles />} />
