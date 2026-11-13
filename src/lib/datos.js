@@ -32,7 +32,7 @@ export async function cargarDatos() {
     traerTodo('encuestas', 'id,codigo,colaborador_id,etapa,fecha,comentarios_ch,acciones_acordadas,alertas,responsable_seguimiento,fecha_proximo_seguimiento,entrevistadores(nombre)'),
     traerTodo('respuestas_escala', 'encuesta_id,puntaje,preguntas(orden)'),
     traerTodo('respuestas_abiertas', 'encuesta_id,texto,preguntas(orden)'),
-    traerTodo('verbatims', 'encuesta_id,orden,texto,tono,preguntas(orden),temas(nombre)'),
+    traerTodo('verbatims', 'id,encuesta_id,orden,texto,tono,preguntas(orden),temas(nombre)'),
   ])
   const colaboradores = cols.map(c => ({
     id: String(c.id), nombre: c.nombre, empresa: c.empresas ? c.empresas.nombre : '', area: c.areas ? c.areas.nombre : '',
@@ -51,9 +51,17 @@ export async function cargarDatos() {
   abi.forEach(x => { const e = porId[x.encuesta_id]; if (e && x.preguntas) e.a[x.preguntas.orden - 1] = x.texto })
   ver.sort((a, b) => a.orden - b.orden).forEach(x => {
     const e = porId[x.encuesta_id]
-    if (e && x.preguntas) e.v.push({ p: x.preguntas.orden - 1, texto: x.texto, tema: x.temas ? x.temas.nombre : '', tono: x.tono })
+    if (e && x.preguntas) e.v.push({ p: x.preguntas.orden - 1, texto: x.texto, tema: x.temas ? x.temas.nombre : '', tono: x.tono, id: x.id })
   })
   return normalize({ version: 1, demo: false, colaboradores, encuestas: Object.values(porId) })
+}
+
+// Corrige el tono de una o varias frases (Admin y Editor; la regla real la aplica RLS con can_write()).
+export async function cambiarTono(ids, tono) {
+  const { data, error } = await sb.from('verbatims').update({ tono }).in('id', ids).select('id')
+  if (error) return errorTexto(error)
+  if (!data || data.length === 0) return 'No se pudo guardar el cambio. Revisa tu rol.'
+  return null
 }
 
 // ---- Acceso, usuarios y roles (modelo public.users / roles / user_roles) ----

@@ -5,7 +5,7 @@ import Preguntas from './Preguntas'
 import Nivel from './Nivel'
 import Verbatims from './Verbatims'
 
-export default function Dashboard({ c, onEtapa }) {
+export default function Dashboard({ c, onEtapa, onCorregirTono }) {
   const promR = c.allEt === null ? null : r1(c.allEt)
   const bajo = c.qs.filter(q => q.low).length
   const gauge = promR === null ? 0 : (promR / 5) * ARC
@@ -72,7 +72,7 @@ export default function Dashboard({ c, onEtapa }) {
           <h2 className="ptitle disp">Lo que dicen los colaboradores</h2>
           <span className="muted" style={sx('font-size:12px')}>{c.base} personas con respuestas abiertas · {c.et} días</span>
         </div>
-        <Verbatims c={c} />
+        <Verbatims c={c} onCorregirTono={onCorregirTono} />
       </section>
     </div>
   )

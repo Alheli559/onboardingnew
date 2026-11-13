@@ -7,7 +7,7 @@ export function normalize(o) {
   o.encuestas.forEach(x => {
     x.etapa = Number(x.etapa);
     if (Array.isArray(x.v)) {
-      x.v = x.v.filter(it => it && it.texto).map(it => ({ p: Number(it.p) || 0, texto: String(it.texto), tema: it.tema || '', tono: it.tono || '' }));
+      x.v = x.v.filter(it => it && it.texto).map(it => ({ p: Number(it.p) || 0, texto: String(it.texto), tema: it.tema || '', tono: it.tono || '', id: it.id }));
       if (!x.a) x.a = [0, 1, 2].map(p => x.v.filter(it => it.p === p).map(it => it.texto).join(' … '));
       if (!x.t) x.t = [0, 1, 2].map(p => { const it = x.v.find(z => z.p === p); return it ? it.tema : ''; });
     }

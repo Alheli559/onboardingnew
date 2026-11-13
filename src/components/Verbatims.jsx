@@ -17,7 +17,32 @@ const relev = q => {
 
 // Lo que dicen los colaboradores, en tres pestañas por tono. Las frases que dicen lo mismo (mismo tema y tono)
 // se agrupan: se muestra la más representativa y cuántas personas mencionan esa idea.
-export default function Verbatims({ c }) {
+const OPCIONES = [['pos', 'Lo positivo'], ['neu', 'Sugerencia'], ['neg', 'Por mejorar'], ['info', 'No mostrar']]
+
+// Selector de tono de una tarjeta (solo Admin y Editor). Cambia el tono de todas las menciones de esa frase.
+function CorregirTono({ q, actual, onCorregirTono }) {
+  const [abierto, setAbierto] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  if (!q.ids || !q.ids.length) return null
+  const elegir = async tono => {
+    setBusy(true); setErr('')
+    const msg = await onCorregirTono(q.ids, tono)
+    setBusy(false)
+    if (msg) setErr(msg); else setAbierto(false)
+  }
+  if (!abierto) return <button type="button" className="tchip" style={{ marginLeft: 'auto' }} onClick={() => setAbierto(true)}>Corregir clasificación</button>
+  return (
+    <div style={sx('display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%')} role="group" aria-label="Mover esta frase a">
+      <span className="muted" style={sx('font-size:12px')}>Mover a:</span>
+      {OPCIONES.filter(([k]) => k !== actual).map(([k, t]) => <button key={k} type="button" className="tchip" disabled={busy} onClick={() => elegir(k)}>{t}</button>)}
+      <button type="button" className="tchip" disabled={busy} onClick={() => setAbierto(false)}>Cancelar</button>
+      {err && <span className="err" role="alert" style={{ width: '100%' }}>{err}</span>}
+    </div>
+  )
+}
+
+export default function Verbatims({ c, onCorregirTono }) {
   const [vtab, setVtab] = useState('pos')
   const [todas, setTodas] = useState(false)
   useEffect(() => { setTodas(false) }, [c.et])
@@ -62,6 +87,7 @@ export default function Verbatims({ c }) {
                   <span className="vtag">{g.tema}</span>
                   {n > 1 && <span className={`vrep vrep-${act.k}`}>{n} personas dijeron algo similar</span>}
                   {!q.tono && <span className="vtag" style={{ background: '#eef0f4' }}>Sin clasificar</span>}
+                  {onCorregirTono && <CorregirTono q={q} actual={q.tono} onCorregirTono={onCorregirTono} />}
                 </div>
               </article>
             )

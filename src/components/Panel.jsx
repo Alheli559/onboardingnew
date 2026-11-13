@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router
 import { useAuth } from '../auth'
 import { calcular } from '../lib/calculos'
 import { ETAPAS } from '../lib/constantes'
-import { borrarColaborador, borrarEncuesta, cargarDatos, errorTexto, guardarColaborador, guardarEncuesta } from '../lib/datos'
+import { borrarColaborador, borrarEncuesta, cargarDatos, errorTexto, guardarColaborador, guardarEncuesta, cambiarTono } from '../lib/datos'
 import { hoy, sx } from '../lib/utils'
 import Sidebar from './Sidebar'
 import Filtros from './Filtros'
@@ -78,6 +78,13 @@ export default function Panel() {
   const usaFiltros = !!data && (pathname === '/dashboard' || pathname === '/colaboradores')
   const ctx = {
     data, c, etapa, setEtapa, errorCarga, reintentar: cargarInicial, aviso,
+    corregirTono: async (ids, tono) => {
+      const msg = await cambiarTono(ids, tono)
+      if (msg) return msg
+      try { await recargar() } catch (e) { return 'Se guardó, pero no se pudo actualizar la vista: ' + errorTexto(e) }
+      aviso('Clasificación actualizada')
+      return null
+    },
     abrirColab: colId => setModal({ tipo: 'colab', colId }),
     abrirEncuesta: (colId, et) => setModal({ tipo: 'enc', colId, etapa: et }),
   }
@@ -128,7 +135,8 @@ function CargandoDatos() {
 }
 
 export function PaginaDashboard() {
-  const { data, c, etapa, setEtapa } = useOutletContext()
+  const { data, c, etapa, setEtapa, corregirTono } = useOutletContext()
+  const { puedeEditar } = useAuth()
   if (!data) return <CargandoDatos />
   return (
     <>
@@ -138,7 +146,7 @@ export function PaginaDashboard() {
           {ETAPAS.map(e => <button key={e} className={'segb' + (e === etapa ? ' on' : '')} aria-pressed={e === etapa} onClick={() => setEtapa(e)}>{e} días</button>)}
         </div>
       </div>
-      <Dashboard c={c} onEtapa={setEtapa} />
+      <Dashboard c={c} onEtapa={setEtapa} onCorregirTono={puedeEditar ? corregirTono : null} />
     </>
   )
 }

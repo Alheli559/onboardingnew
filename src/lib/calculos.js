@@ -29,8 +29,8 @@ export function calcular(data, etapa, fSel) {
   // Cada verbatim: [texto, pregunta, tema, tono]. Tono: pos (positivo), neu (sugerencia), neg (por mejorar), info (no se muestra).
   const base = new Set()
   const tm = {}
-  const items = x => (Array.isArray(x.v) && x.v.length ? x.v.map(it => [it.texto, it.p, it.tema, it.tono || '']) : (x.a || []).map((txt, i) => [txt, i, x.t && x.t[i], (x.o && x.o[i]) || '']))
-  encEt.forEach(x => items(x).forEach(([txt, i, tema0, tono]) => {
+  const items = x => (Array.isArray(x.v) && x.v.length ? x.v.map(it => [it.texto, it.p, it.tema, it.tono || '', it.id]) : (x.a || []).map((txt, i) => [txt, i, x.t && x.t[i], (x.o && x.o[i]) || '']))
+  encEt.forEach(x => items(x).forEach(([txt, i, tema0, tono, vid]) => {
     if (!txt) return
     base.add(x.id)
     const tema = tema0 || 'Sin clasificar'
@@ -38,7 +38,8 @@ export function calcular(data, etapa, fSel) {
     g.people.add(x.id)
     g.tonos[tono] = (g.tonos[tono] || 0) + 1
     const key = txt.trim().toLowerCase()
-    const qd = (g.quotes[key] = g.quotes[key] || { texto: txt.trim(), people: new Set(), preg: new Set(), areas: new Set(), tono })
+    const qd = (g.quotes[key] = g.quotes[key] || { texto: txt.trim(), people: new Set(), preg: new Set(), areas: new Set(), tono, ids: [] })
+    if (vid) qd.ids.push(vid)
     qd.people.add(x.id)
     qd.preg.add(i + 1)
     qd.areas.add(x.area)
