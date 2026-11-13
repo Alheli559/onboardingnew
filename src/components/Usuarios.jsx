@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { MoreHorizontal, Pencil, KeyRound, Plus, Search, UserCheck, UserX, X } from 'lucide-react'
+import { MoreHorizontal, Pencil, KeyRound, Plus, Search, Trash2, UserCheck, UserX, X } from 'lucide-react'
 import { useAuth } from '../auth'
-import { activarUsuario, actualizarNombre, cambiarRol, crearUsuario, errorTexto, listarUsuarios, restablecerContrasena } from '../lib/datos'
+import { activarUsuario, actualizarNombre, cambiarRol, crearUsuario, errorTexto, eliminarUsuario, listarUsuarios, restablecerContrasena } from '../lib/datos'
 import { sx } from '../lib/utils'
 import Confirmar from './Confirmar'
 
@@ -174,6 +174,13 @@ export default function Usuarios() {
   useEffect(() => { cargar() }, [])
 
   const listo = msg => { setModal(null); aviso(msg); cargar() }
+  const eliminar = async u => {
+    setBusy(true); setErrAccion('')
+    const msg = await eliminarUsuario(u.id)
+    setBusy(false)
+    if (msg) { setErrAccion(msg); return }
+    listo('Usuario eliminado')
+  }
   const cambiarEstado = async (u, activo) => {
     setBusy(true); setErrAccion('')
     const msg = await activarUsuario(u.id, activo)
@@ -227,6 +234,7 @@ export default function Usuarios() {
                     <MenuFila etiqueta={nombreCompleto(u)} acciones={[
                       { texto: 'Restablecer contraseña', icono: <KeyRound {...ic} />, onClick: () => setModal({ tipo: 'clave', u }) },
                       { texto: 'Editar', icono: <Pencil {...ic} />, onClick: () => setModal({ tipo: 'editar', u }) },
+                      { texto: 'Eliminar', icono: <Trash2 {...ic} />, deshabilitado: yo, ayuda: yo ? 'No puedes eliminar tu propia cuenta' : undefined, onClick: () => { setErrAccion(''); setModal({ tipo: 'eliminar', u }) } },
                       u.is_active
                         ? { texto: 'Desactivar', icono: <UserX {...ic} />, deshabilitado: yo, ayuda: yo ? 'No puedes desactivar tu propia cuenta' : undefined, onClick: () => { setErrAccion(''); setModal({ tipo: 'desactivar', u }) } }
                         : { texto: 'Activar', icono: <UserCheck {...ic} />, onClick: () => cambiarEstado(u, true) },
@@ -242,6 +250,10 @@ export default function Usuarios() {
         <FormUsuario key={modal.u ? modal.u.id : 'nuevo'} u={modal.u} soyYo={modal.u && modal.u.id === user.id} onClose={() => setModal(null)} onListo={listo} />
       )}
       {modal && modal.tipo === 'clave' && <FormClave u={modal.u} onClose={() => setModal(null)} onListo={listo} />}
+      {modal && modal.tipo === 'eliminar' && (
+        <Confirmar titulo="¿Eliminar este usuario?" texto={`${nombreCompleto(modal.u)} (${modal.u.email}) se eliminará de forma permanente y no podrá volver a entrar. Esta acción no se puede deshacer. Las encuestas registradas no se borran. Si solo quieres bloquear el acceso, usa «Desactivar».`}
+          busy={busy} error={errAccion} onCancelar={() => setModal(null)} onConfirmar={() => eliminar(modal.u)} />
+      )}
       {modal && modal.tipo === 'desactivar' && (
         <Confirmar titulo="¿Desactivar este usuario?" texto={`${nombreCompleto(modal.u)} no podrá iniciar sesión ni ver datos hasta que lo actives de nuevo.`}
           busy={busy} error={errAccion} onCancelar={() => setModal(null)} onConfirmar={() => cambiarEstado(modal.u, false)} />

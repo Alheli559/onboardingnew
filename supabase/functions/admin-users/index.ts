@@ -4,6 +4,7 @@
 // NO pueden ejecutarse en el navegador:
 //   - create      : crear usuario con contraseña (auth.admin.createUser)
 //   - set_active  : activar / desactivar (perfil + bloqueo de login en Supabase Auth)
+//   - delete      : elimina un usuario (no a sí mismo ni al último Admin activo)
 //   - reset_password : el Admin fija una contraseña temporal a otro usuario
 //
 // Cambiar rol o editar nombre NO pasa por aquí: el frontend lo hace directo con RLS
@@ -139,6 +140,24 @@ Deno.serve(async (req) => {
         if (banErr) return json(500, { error: banErr.message });
 
         return json(200, { id: user_id, is_active });
+      }
+
+      case "delete": {
+        const user_id = String(body.user_id ?? "");
+        if (!user_id) return json(400, { error: "user_id es obligatorio" });
+        if (user_id === callerId) return json(400, { error: "No puedes eliminar tu propia cuenta" });
+
+        // No dejar el sistema sin ningún Admin activo
+        const { data: esAdminObj } = await admin.from("user_roles").select("role_id").eq("user_id", user_id).eq("role_id", 1).maybeSingle();
+        if (esAdminObj) {
+          const { data: admins } = await admin.from("user_roles").select("user_id, users!inner(is_active)").eq("role_id", 1).eq("users.is_active", true).neq("user_id", user_id);
+          if (!admins || admins.length === 0) return json(400, { error: "Debe existir al menos un Admin activo" });
+        }
+
+        // Borra la cuenta en Supabase Auth; public.users y user_roles se eliminan en cascada
+        const { error: delErr } = await admin.auth.admin.deleteUser(user_id);
+        if (delErr) return json(400, { error: delErr.message });
+        return json(200, { id: user_id });
       }
 
       case "reset_password": {
