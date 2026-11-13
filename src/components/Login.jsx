@@ -42,7 +42,6 @@ export default function Login() {
           <input id="lg-email" className="fp-input" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} disabled={busy} />
         </div>
         <CampoContrasena label="Contraseña" value={pass} onChange={e => setPass(e.target.value)} autoComplete="current-password" disabled={busy} />
-        <Link className="fp-link" style={{ alignSelf: 'flex-end' }} to="/recuperar-contrasena">¿Olvidaste tu contraseña?</Link>
         <Boton type="submit" cargando={busy} textoCargando="Ingresando...">Iniciar sesión</Boton>
       </form>
       <p className="fp-sub">¿Necesitas acceso? Pídeselo al administrador de Capital Humano.</p>

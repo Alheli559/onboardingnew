@@ -33,8 +33,7 @@ para que **solo el administrador cree usuarios** (no hay registro libre).
 2. Verifica que entras como Admin. Solo entonces ejecuta `…100009_limpiar_sistema_anterior.sql` (borra `perfiles` y funciones viejas).
 3. Despliega la función: `supabase functions deploy admin-users` y define el secreto `ALLOWED_ORIGIN` con tu dominio de Vercel.
 4. **Authentication → Sign In / Providers**: desactiva **Allow new users to sign up**.
-5. **Authentication → URL Configuration**: Site URL = tu dominio de Vercel; en Redirect URLs agrega
-   `https://<tu-dominio>/nueva-contrasena` y `http://localhost:5173/nueva-contrasena` (recuperación de contraseña).
+   (Opcional) Site URL = tu dominio de Vercel. No hay recuperación de contraseña por correo: si alguien la olvida, el Admin le crea el acceso de nuevo.
 6. Recomendado: SMTP propio (el de Supabase tiene límite bajo de correos).
 7. Corre `pruebas-seguridad.sql` de la skill solo en un proyecto de prueba, nunca en producción.
 
@@ -64,7 +63,7 @@ sin rol ve «Acceso pendiente».
 ```
 src/
   main.jsx · App.jsx · auth.jsx      Arranque, panel principal y sesión
-  components/                        Login, Recuperar, NuevaContrasena, Guardas, Panel, Sidebar, Perfil, Roles, Filtros, Dashboard, Preguntas, Nivel, Verbatims,
+  components/                        Login, Guardas, Panel, Sidebar, Perfil, Roles, Filtros, Dashboard, Preguntas, Nivel, Verbatims,
                                      Colaboradores, FormColab, FormEncuesta, Usuarios, Confirmar
   lib/
     supabase.js                      Conexión a Supabase

@@ -44,7 +44,6 @@ export function AuthProvider({ children }) {
     const { data: sub } = sb.auth.onAuthStateChange((ev, session) => {
       // No se llama a Supabase dentro del callback (podría bloquearse): se difiere.
       if (ev === 'SIGNED_OUT') setTimeout(() => cargar(null), 0)
-      else if (ev === 'PASSWORD_RECOVERY') setTimeout(() => { cargar(session); navigate('/nueva-contrasena') }, 0)
       else if (ev === 'SIGNED_IN' || ev === 'TOKEN_REFRESHED' || ev === 'USER_UPDATED') setTimeout(() => cargar(session), 0)
     })
     return () => sub.subscription.unsubscribe()
@@ -56,10 +55,6 @@ export function AuthProvider({ children }) {
     return e ? errorTexto(e) : null
   }, [])
   const cerrarSesion = useCallback(async () => { await sb.auth.signOut(); navigate('/login') }, [navigate])
-  const solicitarRecuperacion = useCallback(async email => {
-    const { error: e } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/nueva-contrasena' })
-    return e ? errorTexto(e) : null
-  }, [])
   const actualizarContrasena = useCallback(async password => {
     const { error: e } = await sb.auth.updateUser({ password })
     return e ? errorTexto(e) : null
@@ -73,8 +68,8 @@ export function AuthProvider({ children }) {
     esAdmin: rol === 'Admin',
     puedeEditar: rol === 'Admin' || rol === 'Editor', // crear y editar
     puedeBorrar: rol === 'Admin', // eliminar (solo UX: la regla real está en RLS)
-    iniciarSesion, cerrarSesion, solicitarRecuperacion, actualizarContrasena, reintentar, recargarPerfil,
-  }), [estado, user, perfil, roles, rol, error, aviso, iniciarSesion, cerrarSesion, solicitarRecuperacion, actualizarContrasena, reintentar, recargarPerfil])
+    iniciarSesion, cerrarSesion, actualizarContrasena, reintentar, recargarPerfil,
+  }), [estado, user, perfil, roles, rol, error, aviso, iniciarSesion, cerrarSesion, actualizarContrasena, reintentar, recargarPerfil])
 
   return <AuthCtx.Provider value={valor}>{children}</AuthCtx.Provider>
 }
