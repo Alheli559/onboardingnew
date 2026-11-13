@@ -33,13 +33,30 @@ export default function Preguntas({ c }) {
             <div className="pprom">
               <span className={'pval' + (q.low ? ' low' : '')} title={dif === null ? 'Sin datos' : dif >= 0 ? 'Cumple la meta' : 'Por debajo de la meta'}>{q.pr === null ? '—' : q.pr.toFixed(1)}</span>
             </div>
-            <div className="stack" title={`${q.lo} bajo (1–2) · ${q.mid} regular (3) · ${q.hi} bueno (4–5)`}>
+            <div className="stackw" tabIndex={q.n > 0 ? 0 : undefined} aria-label={`${q.nombre}: ${q.lo} bajo, ${q.mid} regular, ${q.hi} bueno`}>
+              <div className="stack">
+                {q.n > 0 && (
+                  <>
+                    <div className="sg lo" style={{ flex: `${q.lo} 1 0` }}>{etiqueta(q.lo, q.n)}</div>
+                    <div className="sg mid" style={{ flex: `${q.mid} 1 0` }}>{etiqueta(q.mid, q.n)}</div>
+                    <div className="sg hi" style={{ flex: `${q.hi} 1 0` }}>{etiqueta(q.hi, q.n)}</div>
+                  </>
+                )}
+              </div>
               {q.n > 0 && (
-                <>
-                  <div className="sg lo" style={{ flex: `${q.lo} 1 0` }}>{etiqueta(q.lo, q.n)}</div>
-                  <div className="sg mid" style={{ flex: `${q.mid} 1 0` }}>{etiqueta(q.mid, q.n)}</div>
-                  <div className="sg hi" style={{ flex: `${q.hi} 1 0` }}>{etiqueta(q.hi, q.n)}</div>
-                </>
+                <div className="sttip" role="tooltip">
+                  <div className="sthead"><b>{q.nombre}</b><span>{q.n} {q.n === 1 ? 'respuesta' : 'respuestas'}</span></div>
+                  {[['lo', '1–2 · Bajo', q.lo], ['mid', '3 · Regular', q.mid], ['hi', '4–5 · Bueno', q.hi]].map(([k, t, v]) => (
+                    <div className="strow" key={k}>
+                      <span className={'stdot ' + k} aria-hidden="true" />
+                      <span className="stlab">{t}</span>
+                      <span className="stval"><b>{v}</b> {v === 1 ? 'persona' : 'personas'}</span>
+                      <span className="stpct">{pct(v, q.n)} %</span>
+                      <span className="stbar" aria-hidden="true"><i className={k} style={{ width: pct(v, q.n) + '%' }} /></span>
+                    </div>
+                  ))}
+                  <div className="stfoot">Promedio <b>{q.pr === null ? '—' : q.pr.toFixed(1)}</b> · Meta {META.toFixed(1)}</div>
+                </div>
               )}
             </div>
           </div>
