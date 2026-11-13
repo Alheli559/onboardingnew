@@ -4,6 +4,7 @@
 // NO pueden ejecutarse en el navegador:
 //   - create      : crear usuario con contraseña (auth.admin.createUser)
 //   - set_active  : activar / desactivar (perfil + bloqueo de login en Supabase Auth)
+//   - reset_password : el Admin fija una contraseña temporal a otro usuario
 //
 // Cambiar rol o editar nombre NO pasa por aquí: el frontend lo hace directo con RLS
 // (supabase.rpc('set_user_role', ...) y update de public.users).
@@ -138,6 +139,16 @@ Deno.serve(async (req) => {
         if (banErr) return json(500, { error: banErr.message });
 
         return json(200, { id: user_id, is_active });
+      }
+
+      case "reset_password": {
+        const user_id = String(body.user_id ?? "");
+        const password = String(body.password ?? "");
+        if (!user_id) return json(400, { error: "user_id es obligatorio" });
+        if (password.length < 8) return json(400, { error: "La contraseña debe tener al menos 8 caracteres" });
+        const { error: pwErr } = await admin.auth.admin.updateUserById(user_id, { password });
+        if (pwErr) return json(400, { error: pwErr.message });
+        return json(200, { id: user_id });
       }
 
       default:

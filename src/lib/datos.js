@@ -100,6 +100,7 @@ async function llamarFuncionAdmin(body) {
 }
 export const crearUsuario = p => llamarFuncionAdmin({ action: 'create', ...p }).then(r => r.error)
 export const activarUsuario = (user_id, is_active) => llamarFuncionAdmin({ action: 'set_active', user_id, is_active }).then(r => r.error)
+export const restablecerContrasena = (user_id, password) => llamarFuncionAdmin({ action: 'reset_password', user_id, password }).then(r => r.error)
 // Guardar colaborador y encuesta pasan por funciones de la base que respetan el rol de quien las llama.
 export async function guardarColaborador(c) {
   const { error } = await sb.rpc('guardar_colaborador', { p: c })

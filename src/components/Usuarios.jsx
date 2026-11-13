@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { MoreHorizontal, Pencil, Plus, Search, UserCheck, UserX, X } from 'lucide-react'
+import { MoreHorizontal, Pencil, KeyRound, Plus, Search, UserCheck, UserX, X } from 'lucide-react'
 import { useAuth } from '../auth'
-import { activarUsuario, actualizarNombre, cambiarRol, crearUsuario, errorTexto, listarUsuarios } from '../lib/datos'
+import { activarUsuario, actualizarNombre, cambiarRol, crearUsuario, errorTexto, listarUsuarios, restablecerContrasena } from '../lib/datos'
 import { sx } from '../lib/utils'
 import Confirmar from './Confirmar'
 
@@ -10,6 +10,38 @@ const ROLES = [[1, 'Admin'], [2, 'Editor'], [3, 'Visualizador']]
 const nombreCompleto = u => [u.name, u.last_name].filter(Boolean).join(' ') || '—'
 const fecha = iso => (iso ? new Date(iso).toLocaleDateString('es-PE') : '—')
 const ic = { size: 16, strokeWidth: 1.75, 'aria-hidden': true }
+
+// Restablecer contraseña (solo Admin; la función del servidor lo vuelve a verificar).
+function FormClave({ u, onClose, onListo }) {
+  const [pass, setPass] = useState('')
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+  const enviar = async e => {
+    e.preventDefault()
+    if (pass.length < 8) { setErr('La contraseña debe tener al menos 8 caracteres.'); return }
+    setBusy(true)
+    const msg = await restablecerContrasena(u.id, pass)
+    setBusy(false)
+    if (msg) setErr(msg); else onListo('Contraseña restablecida. Compártela con la persona por un medio seguro.')
+  }
+  return (
+    <div className="modalwrap center">
+      <button className="scrim" aria-label="Cerrar" onClick={onClose} />
+      <form className="modal narrow" role="dialog" aria-modal="true" aria-labelledby="rc-t" onSubmit={enviar} noValidate>
+        <div className="mbody">
+          <h2 id="rc-t" className="disp" style={{ margin: 0, fontSize: 20, color: '#0a1e64' }}>Restablecer contraseña</h2>
+          <p className="muted" style={{ margin: 0, fontSize: 13 }}>{nombreCompleto(u)} · {u.email}. Define una contraseña temporal; la persona puede cambiarla en «Mi perfil».</p>
+          {err && <div className="err" role="alert">{err}</div>}
+          <div className="field"><label htmlFor="rc-pass">Nueva contraseña * (mínimo 8)</label><input id="rc-pass" className="inp" type="password" autoComplete="new-password" value={pass} onChange={e => setPass(e.target.value)} /></div>
+        </div>
+        <div className="mfoot">
+          <button type="button" className="btn" onClick={onClose} disabled={busy}>Cancelar</button>
+          <button type="submit" className="btn pri" disabled={busy}>{busy ? 'Guardando…' : 'Restablecer'}</button>
+        </div>
+      </form>
+    </div>
+  )
+}
 
 // Menú de tres puntos de cada fila.
 function MenuFila({ etiqueta, acciones }) {
@@ -112,7 +144,7 @@ function FormUsuario({ u, soyYo, onClose, onListo }) {
               </div>
             )}
           </div>
-          {!edita && <span className="muted" style={sx('font-size:12px')}>La persona entra con este correo y esta contraseña; puede cambiarla desde «Mi perfil» o con «¿Olvidaste tu contraseña?».</span>}
+          {!edita && <span className="muted" style={sx('font-size:12px')}>La persona entra con este correo y esta contraseña; puede cambiarla desde «Mi perfil»; si la olvida, el Admin puede restablecerla.</span>}
         </div>
         <div className="mfoot">
           <button type="button" className="btn" onClick={onClose}>Cancelar</button>
@@ -193,6 +225,7 @@ export default function Usuarios() {
                   <td className="muted" style={sx('font-size:13px')}>{fecha(u.created_at)}</td>
                   <td style={{ textAlign: 'right' }}>
                     <MenuFila etiqueta={nombreCompleto(u)} acciones={[
+                      { texto: 'Restablecer contraseña', icono: <KeyRound {...ic} />, onClick: () => setModal({ tipo: 'clave', u }) },
                       { texto: 'Editar', icono: <Pencil {...ic} />, onClick: () => setModal({ tipo: 'editar', u }) },
                       u.is_active
                         ? { texto: 'Desactivar', icono: <UserX {...ic} />, deshabilitado: yo, ayuda: yo ? 'No puedes desactivar tu propia cuenta' : undefined, onClick: () => { setErrAccion(''); setModal({ tipo: 'desactivar', u }) } }
@@ -208,6 +241,7 @@ export default function Usuarios() {
       {modal && (modal.tipo === 'nuevo' || modal.tipo === 'editar') && (
         <FormUsuario key={modal.u ? modal.u.id : 'nuevo'} u={modal.u} soyYo={modal.u && modal.u.id === user.id} onClose={() => setModal(null)} onListo={listo} />
       )}
+      {modal && modal.tipo === 'clave' && <FormClave u={modal.u} onClose={() => setModal(null)} onListo={listo} />}
       {modal && modal.tipo === 'desactivar' && (
         <Confirmar titulo="¿Desactivar este usuario?" texto={`${nombreCompleto(modal.u)} no podrá iniciar sesión ni ver datos hasta que lo actives de nuevo.`}
           busy={busy} error={errAccion} onCancelar={() => setModal(null)} onConfirmar={() => cambiarEstado(modal.u, false)} />
