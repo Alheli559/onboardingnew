@@ -127,10 +127,6 @@ export default function FormEncuesta({ col, encuesta, etapa, puedeEditar, puedeB
               {texto('x-com', 'comentarios', 'Comentarios', 'Observaciones generales sobre el colaborador…')}
               {texto('x-acc', 'acciones', 'Acciones acordadas', 'Compromisos o planes de acción acordados…')}
               {texto('x-ale', 'alertas', '⚠ Alertas', 'Señales de riesgo o situaciones a monitorear…')}
-              <div className="g2">
-                <div className="field"><label htmlFor="x-rsp">Responsable de seguimiento</label><input id="x-rsp" className="inp" placeholder="Nombre del responsable" value={f.respSeg || ''} onChange={cambia('respSeg')} /></div>
-                <div className="field"><label htmlFor="x-prx">Fecha próximo seguimiento</label><input id="x-prx" className="inp" type="date" value={f.fechaProx || ''} onChange={cambia('fechaProx')} /></div>
-              </div>
             </div>
           )}
         </div>
