@@ -96,7 +96,7 @@ function etapaHTML(e) {
     </div>
     <div class="card"><h3 class="sec">Preguntas de escala</h3><table><thead><tr><th>Pregunta</th><th>Nivel</th><th>Puntaje</th></tr></thead><tbody>${filas}</tbody></table></div>
     <div class="card"><h3 class="sec">Preguntas abiertas</h3>${resp}</div>
-    <div class="card int"><h3 class="sec">Observaciones RRHH<span class="tag">Uso interno</span></h3>${interno || '<div class="vacio">Sin observaciones registradas.</div>'}</div>
+    <div class="card int"><h3 class="sec">Observaciones de Capital Humano<span class="tag">Uso interno</span></h3>${interno || '<div class="vacio">Sin observaciones registradas.</div>'}</div>
   </section>`
 }
 
