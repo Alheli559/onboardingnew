@@ -4,6 +4,7 @@ import frioteam from '../assets/frioteam.png'
 import coldtainer from '../assets/coldtainer.png'
 import colombia from '../assets/colombia.png'
 import mexico from '../assets/mexico.png'
+import hermetica from '../assets/hermetica.png'
 import grupo from '../assets/grupo.webp'
 
 export { grupo, grupoColor }
@@ -15,6 +16,8 @@ export const LOGOS = {
   frioteam: [frioteam, 140, 0],
   coldtainer: [coldtainer, 164, -12],
   'friopacking colombia': [colombia, 146, -2],
+  'hermética': [hermetica, 172, 0],
+  hermetica: [hermetica, 172, 0],
   'friopacking méxico': [mexico, 150, 0],
   'friopacking mexico': [mexico, 150, 0],
 }
