@@ -272,3 +272,20 @@ textarea.inp{padding:10px 12px;min-height:72px;resize:vertical}
 .utab th,.utab td{text-align:left;padding:12px 10px;border-bottom:1px solid #e7ebf2}
 .utab th{font-size:12px;color:#5b6b85;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .tstep.ro{cursor:default}
+
+/* ---- Diseño: barra lateral fija; solo se desplaza el contenido ---- */
+.app{height:100vh;height:100dvh;min-height:0;box-sizing:border-box;overflow:hidden}
+.shell{height:100%;box-sizing:border-box;flex-wrap:nowrap;overflow:hidden}
+.side{flex:0 0 240px;max-width:240px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.side::-webkit-scrollbar{display:none}
+.mainp{flex:1 1 0;min-width:0;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#c3cbe0 transparent}
+.mainp::-webkit-scrollbar{width:10px}
+.mainp::-webkit-scrollbar-thumb{background:#c3cbe0;border-radius:10px;border:3px solid #f6f8fc}
+.mainp::-webkit-scrollbar-thumb:hover{background:#9aa6c6}
+.mainp>*{flex-shrink:0}
+@media (max-width:900px){
+  .app{height:auto;min-height:100vh;overflow:visible}
+  .shell{height:auto;flex-wrap:wrap;overflow:visible}
+  .side{flex:1 1 100%;max-width:none;overflow:visible}
+  .mainp{flex:1 1 100%;overflow:visible}
+}
