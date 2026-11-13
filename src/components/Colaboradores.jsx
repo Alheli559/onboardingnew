@@ -4,6 +4,7 @@ import { addDays, fmt, hoy, nivelAuto, prom, r1, sx } from '../lib/utils'
 import { META } from '../lib/constantes'
 import { NIVELES } from '../lib/constantes'
 import { IconPlus } from './Icons'
+import { descargarInforme } from '../lib/informe'
 
 // Ficha de cada colaborador con su línea de tiempo de encuestas a los 15, 30, 60 y 90 días.
 export default function Colaboradores({ data, c, puedeEditar, onNuevo, onEditar, onEncuesta }) {
@@ -34,6 +35,7 @@ export default function Colaboradores({ data, c, puedeEditar, onNuevo, onEditar,
               <div style={sx('display:flex;align-items:center;gap:10px')}>
                 <span className={'chip ' + (hechas === 4 ? 'ok' : 'nd')}>{hechas}/4 períodos</span>
                 {pAll !== null && <span className="muted" style={sx('font-size:13px')}>Promedio <b style={{ color: '#0a1e64' }}>{pAll.toFixed(1)}</b></span>}
+                {puedeEditar && hechas > 0 && <button className="btn sm" onClick={() => descargarInforme(col, encs)}>Informe completo</button>}
                 {puedeEditar && <button className="btn sm" onClick={() => onEditar(col)}>Editar datos</button>}
               </div>
             </div>

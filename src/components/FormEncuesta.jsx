@@ -4,6 +4,7 @@ import { clasificar } from '../lib/clasificar'
 import { hoy, nivelAuto, prom, sx, uniq } from '../lib/utils'
 import { IconClose } from './Icons'
 import Confirmar from './Confirmar'
+import { descargarInforme } from '../lib/informe'
 
 // Encuesta de un período (misma estructura para 15, 30, 60 y 90 días). Un visualizador la ve en solo lectura y sin las
 // observaciones de Capital Humano.
@@ -140,6 +141,7 @@ export default function FormEncuesta({ col, encuesta, etapa, puedeEditar, puedeB
             <>
               {!completo && <span style={sx('text-align:center;font-size:13px;color:#b45309')}>Selecciona una respuesta para las 5 preguntas de escala para guardar</span>}
               <div style={sx('display:flex;gap:8px;flex-wrap:wrap')}>
+                {encuesta && <button className="btn" onClick={() => descargarInforme(col, [encuesta])} disabled={busy}>Descargar informe</button>}
                 {f.id && puedeBorrar && <button className="btn danger" onClick={() => setConfirmando(true)} disabled={busy}>Eliminar</button>}
                 <button className="btn pri" style={{ flex: '1 1 auto' }} onClick={guardar} disabled={!completo || busy}>{busy ? 'Guardando…' : 'Guardar encuesta'}</button>
                 <button className="btn" onClick={onClose}>Cancelar</button>
