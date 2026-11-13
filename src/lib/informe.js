@@ -2,7 +2,7 @@
 // Se arma como una página HTML y se imprime desde un iframe oculto: en el cuadro de impresión se elige «Guardar como PDF».
 import { CERR, ABIER, ESCALA_L, ETAPAS } from './constantes'
 import { fmt, hoy, nivelAuto, prom, r1 } from './utils'
-import { grupo, LOGOS } from './logos'
+import { grupo, capitalHumano, LOGOS } from './logos'
 
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const url = u => new URL(u, window.location.href).href
@@ -17,6 +17,8 @@ body{font-family:Inter,'Segoe UI',Arial,sans-serif;color:#1a2233;font-size:12px;
 .top img{height:30px;width:auto;display:block}
 .top h1{margin:0 0 4px;font-size:22px;font-weight:800;letter-spacing:-.01em}
 .top p{margin:0;color:#c9d3f2;font-size:12px}
+.chpill{background:#fff;border-radius:12px;padding:6px 12px;display:flex;align-items:center}
+.top .chpill img{height:34px}
 .gen{color:#9fe1cb;font-size:11px;white-space:nowrap}
 .card{background:#f6f8fc;border-radius:16px;padding:16px 18px;margin-top:14px;break-inside:avoid}
 .sec{margin:0 0 10px;font-size:13px;font-weight:800;color:#0a1e64;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
@@ -108,7 +110,7 @@ export function documentoHTML(col, encuestas) {
   const etapas = ETAPAS.filter(et => encuestas.some(e => e.etapa === et)).map(et => etapaHTML(encuestas.find(e => e.etapa === et)))
   const sub = [col.nombre.toUpperCase(), col.cargo && col.cargo.toUpperCase(), 'Grupo Friopacking'].filter(Boolean).join('  ·  ')
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${esc(titulo + ' - ' + col.nombre)}</title><style>${CSS}</style></head><body>
-    <header class="top"><div><h1>${esc(titulo)}</h1><p>${esc(sub)}</p></div><div style="text-align:right"><img src="${esc(url(grupo))}" alt="Grupo Friopacking" style="margin-left:auto"><div class="gen" style="margin-top:6px">Generado el ${esc(fmt(hoy()))}</div></div></header>
+    <header class="top"><div><h1>${esc(titulo)}</h1><p>${esc(sub)}</p></div><div style="display:flex;align-items:center;gap:14px"><span class="chpill"><img src="${esc(url(capitalHumano))}" alt="Capital Humano"></span><div style="text-align:right"><img src="${esc(url(grupo))}" alt="Grupo Friopacking" style="margin-left:auto"><div class="gen" style="margin-top:6px">Generado el ${esc(fmt(hoy()))}</div></div></div></header>
     <div class="card"><h3 class="sec">Datos del colaborador</h3><div class="datos">
       <div><span>Nombre completo</span><b>${esc(col.nombre)}</b></div>
       <div><span>Cargo</span><b>${esc(col.cargo || '—')}</b></div>

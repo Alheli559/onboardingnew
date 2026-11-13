@@ -5,9 +5,10 @@ import coldtainer from '../assets/coldtainer.png'
 import colombia from '../assets/colombia.png'
 import mexico from '../assets/mexico.png'
 import hermetica from '../assets/hermetica.png'
+import capitalHumano from '../assets/capital-humano.png'
 import grupo from '../assets/grupo.webp'
 
-export { grupo, grupoColor }
+export { grupo, grupoColor, capitalHumano }
 
 // [imagen, ancho en px, desplazamiento izquierdo para compensar márgenes del archivo]
 export const LOGOS = {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { capitalHumano } from '../lib/logos'
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { calcular } from '../lib/calculos'
@@ -97,7 +98,7 @@ export default function Panel() {
         <main className="mainp">
           <div style={sx('display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap')}>
             <div style={sx('display:flex;flex-direction:column;gap:2px')}>
-              <span className="muted" style={sx('font-size:13px')}>Capital Humano · Onboarding</span>
+              <img src={capitalHumano} alt="Capital Humano" style={{ height: 46, width: 'auto', display: 'block', alignSelf: 'flex-start' }} />
               <h1 className="disp" style={sx('margin:0;font-size:32px;font-weight:700;color:#0a1e64')}>{TITULOS[pathname] || ''}</h1>
             </div>
             <div style={sx('display:flex;gap:10px;flex-wrap:wrap;align-items:center')}>
