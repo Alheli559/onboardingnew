@@ -7,7 +7,7 @@ import Confirmar from './Confirmar'
 
 // Encuesta de un período (misma estructura para 15, 30, 60 y 90 días). Un visualizador la ve en solo lectura y sin las
 // observaciones de Capital Humano.
-export default function FormEncuesta({ col, encuesta, etapa, puedeEditar, onClose, onGuardar, onBorrar }) {
+export default function FormEncuesta({ col, encuesta, etapa, puedeEditar, puedeBorrar, onClose, onGuardar, onBorrar }) {
   const inicial = useRef(encuesta
     ? JSON.parse(JSON.stringify(encuesta))
     : { id: null, colabId: col.id, etapa, fecha: hoy(), realizadoPor: '', r: [null, null, null, null, null], a: ['', '', ''], comentarios: '', acciones: '', alertas: '', respSeg: '', fechaProx: '' })
@@ -140,7 +140,7 @@ export default function FormEncuesta({ col, encuesta, etapa, puedeEditar, onClos
             <>
               {!completo && <span style={sx('text-align:center;font-size:13px;color:#b45309')}>Selecciona una respuesta para las 5 preguntas de escala para guardar</span>}
               <div style={sx('display:flex;gap:8px;flex-wrap:wrap')}>
-                {f.id && <button className="btn danger" onClick={() => setConfirmando(true)} disabled={busy}>Eliminar</button>}
+                {f.id && puedeBorrar && <button className="btn danger" onClick={() => setConfirmando(true)} disabled={busy}>Eliminar</button>}
                 <button className="btn pri" style={{ flex: '1 1 auto' }} onClick={guardar} disabled={!completo || busy}>{busy ? 'Guardando…' : 'Guardar encuesta'}</button>
                 <button className="btn" onClick={onClose}>Cancelar</button>
               </div>

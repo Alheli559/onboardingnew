@@ -22,34 +22,49 @@ VITE_SUPABASE_ANON_KEY=<clave pública (anon) del proyecto>
 > La clave `anon` es pública por diseño. Lo que cada persona puede ver o editar lo deciden las políticas de seguridad (RLS) de
 > la base, según su rol. **Nunca pongas aquí la clave `service_role`.**
 
+## Base de datos y acceso (una sola vez)
+
+El inicio de sesión sigue la skill **login-auth-gfp**: tablas `users`, `roles`, `user_roles`, RLS por rol y una Edge Function
+para que **solo el administrador cree usuarios** (no hay registro libre).
+
+1. En Supabase → **SQL Editor** ejecuta, en orden, los archivos de `supabase/migrations/`: `…100001` a `…100008`.
+   La 008 migra el sistema anterior (copia usuarios y roles de `perfiles`, cambia las políticas de las 11 tablas y recrea
+   `guardar_colaborador` / `guardar_encuesta`). Se detiene sola si ninguna cuenta quedaría como Admin.
+2. Verifica que entras como Admin. Solo entonces ejecuta `…100009_limpiar_sistema_anterior.sql` (borra `perfiles` y funciones viejas).
+3. Despliega la función: `supabase functions deploy admin-users` y define el secreto `ALLOWED_ORIGIN` con tu dominio de Vercel.
+4. **Authentication → Sign In / Providers**: desactiva **Allow new users to sign up**.
+5. **Authentication → URL Configuration**: Site URL = tu dominio de Vercel; en Redirect URLs agrega
+   `https://<tu-dominio>/nueva-contrasena` y `http://localhost:5173/nueva-contrasena` (recuperación de contraseña).
+6. Recomendado: SMTP propio (el de Supabase tiene límite bajo de correos).
+7. Corre `pruebas-seguridad.sql` de la skill solo en un proyecto de prueba, nunca en producción.
+
 ## Publicarlo en Vercel
 
-1. Sube esta carpeta a un repositorio de GitHub (o usa `npx vercel` desde la carpeta).
-2. En Vercel: **Add New → Project** → elige el repositorio. Vercel detecta Vite solo (build `npm run build`, salida `dist`).
-3. En **Environment Variables** agrega `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` (mismos valores del `.env.local`).
-4. **Deploy**.
-5. En Supabase, entra a **Authentication → URL Configuration** y pon como **Site URL** el dominio que te dio Vercel
-   (por ejemplo `https://tu-proyecto.vercel.app`). Agrégalo también en **Redirect URLs**. Así los correos de confirmación apuntan a la web publicada.
-
-Cada vez que hagas un cambio y lo subas a GitHub, Vercel publica la nueva versión automáticamente.
+1. Sube esta carpeta a GitHub (o usa `npx vercel`).
+2. En Vercel: **Add New → Project**. Detecta Vite solo (`vercel.json` ya redirige las rutas a `index.html`).
+3. En **Environment Variables** agrega `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+4. **Deploy**, y completa los pasos 3 a 5 de la sección anterior con el dominio que te dé Vercel.
 
 ## Roles
 
-| Rol | Ve dashboard y encuestas | Ve observaciones de Capital Humano | Registra y edita | Asigna roles |
+| Rol | Consulta | Crea y edita | Elimina | Usuarios y roles |
 |---|---|---|---|---|
-| Administrador | Sí | Sí | Sí | Sí |
-| Editor | Sí | Sí | Sí | No |
+| Admin | Sí | Sí | Sí | Sí (crear, editar, cambiar rol, desactivar) |
+| Editor | Sí | Sí | No | No |
 | Visualizador | Sí (solo lectura) | No | No | No |
 
-Los permisos se aplican en la base de datos (RLS), no solo ocultando botones. Quien se registra sin rol ve «Acceso pendiente»
-hasta que un administrador le asigna uno desde la pestaña **Usuarios**. La primera cuenta que se crea queda como administradora.
+Los permisos se aplican en la base (RLS), no solo ocultando botones. Una cuenta desactivada no puede entrar. Quien inicia sesión
+sin rol ve «Acceso pendiente».
+
+> Limitación conocida: las observaciones de Capital Humano se ocultan en pantalla al Visualizador, pero la base las devuelve a
+> cualquier rol que pueda leer `encuestas`. Para blindarlas habría que moverlas a una tabla solo para Admin/Editor.
 
 ## Estructura
 
 ```
 src/
   main.jsx · App.jsx · auth.jsx      Arranque, panel principal y sesión
-  components/                        Login, Sidebar, Filtros, Dashboard, Preguntas, Nivel, Verbatims,
+  components/                        Login, Recuperar, NuevaContrasena, Guardas, Panel, Sidebar, Perfil, Roles, Filtros, Dashboard, Preguntas, Nivel, Verbatims,
                                      Colaboradores, FormColab, FormEncuesta, Usuarios, Confirmar
   lib/
     supabase.js                      Conexión a Supabase

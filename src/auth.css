@@ -1,0 +1,45 @@
+/* Pantallas de acceso y administración de usuarios. Paleta institucional de Grupo Frío Packing. */
+.fp-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#EAF9FF;color:#102267;font-family:"Noway","Inter",system-ui,sans-serif}
+.fp-card{width:min(420px,100%);background:#fff;border:1px solid rgba(0,207,232,.4);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 8px 30px rgba(16,34,103,.08)}
+.fp-logo{width:180px;height:auto;align-self:center}
+.fp-title{font-family:"Inter",system-ui,sans-serif;font-weight:700;font-size:24px;line-height:1.2;margin:0;text-align:center;color:#102267}
+.fp-sub{margin:0;text-align:center;font-size:14px;color:rgba(0,0,0,.56)}
+.fp-form{display:flex;flex-direction:column;gap:14px}
+.fp-field{display:flex;flex-direction:column;gap:6px}
+.fp-field label{font-size:13px;font-weight:500;color:#102267}
+.fp-input{width:100%;min-height:44px;padding:0 12px;border:1px solid rgba(16,34,103,.25);border-radius:10px;background:#fff;color:#102267;font:inherit;box-sizing:border-box}
+.fp-input:focus{outline:2px solid #00CFE8;outline-offset:1px;border-color:#00CFE8}
+.fp-input:disabled{background:#f3f6f9;color:rgba(0,0,0,.5)}
+.fp-pass{position:relative}
+.fp-pass .fp-input{padding-right:44px}
+.fp-eye{position:absolute;right:4px;top:4px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:#102267;border-radius:8px;cursor:pointer}
+.fp-eye:focus-visible{outline:2px solid #00CFE8}
+.fp-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border:0;border-radius:10px;background:#007BDF;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.fp-btn:hover{background:#006ac2}
+.fp-btn:focus-visible{outline:2px solid #00CFE8;outline-offset:2px}
+.fp-btn:disabled{opacity:.6;cursor:default}
+.fp-btn.sec{background:#fff;color:#102267;border:1px solid rgba(16,34,103,.25)}
+.fp-btn.sec:hover{background:#EAF9FF}
+.fp-link{color:#007BDF;background:none;border:0;padding:0;font:inherit;font-size:14px;cursor:pointer;text-decoration:none}
+.fp-link:hover{text-decoration:underline}
+.fp-alert-error{background:#fdecec;color:#C62828;border-radius:10px;padding:10px 12px;font-size:14px}
+.fp-alert-info{background:#EAF9FF;color:#102267;border:1px solid rgba(0,207,232,.5);border-radius:10px;padding:10px 12px;font-size:14px}
+.fp-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:fpspin .7s linear infinite}
+@keyframes fpspin{to{transform:rotate(360deg)}}
+.fp-center{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+/* Dentro del panel */
+.fp-badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;background:#EAF9FF;color:#102267;border:1px solid rgba(0,207,232,.5);font-size:12px;font-weight:600}
+.fp-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:#39C1AD}
+.fp-dot.off{background:#9aa5b8}
+.fp-menu{position:relative;display:inline-block}
+.fp-menu-list{position:absolute;right:0;top:100%;z-index:20;min-width:190px;background:#fff;border:1px solid rgba(16,34,103,.15);border-radius:10px;box-shadow:0 10px 30px rgba(16,34,103,.15);padding:6px;display:flex;flex-direction:column}
+.fp-menu-list button{display:flex;align-items:center;gap:8px;border:0;background:none;padding:9px 10px;border-radius:8px;text-align:left;font:inherit;color:#102267;cursor:pointer}
+.fp-menu-list button:hover:not(:disabled){background:#EAF9FF}
+.fp-menu-list button:disabled{opacity:.45;cursor:default}
+.fp-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fp-tools .inp{max-width:260px}
+.fp-perm{display:inline-flex;align-items:center;gap:6px}
+.fp-ok{color:#39C1AD}
+.fp-no{color:#9aa5b8}
+a.navb{text-decoration:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

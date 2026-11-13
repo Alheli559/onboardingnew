@@ -1,19 +1,24 @@
-import { IconDash, IconEnc, IconUsr, IconPlus } from './Icons'
+import { NavLink } from 'react-router-dom'
+import { ShieldCheck, UserRound, Users } from 'lucide-react'
+import { IconDash, IconEnc, IconPlus } from './Icons'
 import { grupo } from '../lib/logos'
-import { ROLES } from '../lib/supabase'
 
-const ICONOS = { dash: <IconDash />, enc: <IconEnc />, usr: <IconUsr /> }
+const ic = { size: 20, strokeWidth: 2, 'aria-hidden': true }
 
-export default function Sidebar({ tab, onTab, perfil, esAdmin, puedeEditar, onNuevo, onSalir, onRespaldo }) {
-  const tabs = [['dash', 'Dashboard'], ['enc', 'Colaboradores']].concat(esAdmin ? [['usr', 'Usuarios']] : [])
+export default function Sidebar({ perfil, rol, esAdmin, puedeEditar, onNuevo, onSalir, onRespaldo }) {
+  const items = [
+    ['/dashboard', 'Dashboard', <IconDash key="d" />],
+    ['/colaboradores', 'Colaboradores', <IconEnc key="c" />],
+  ].concat(esAdmin ? [['/usuarios', 'Usuarios', <Users key="u" {...ic} />], ['/roles', 'Roles', <ShieldCheck key="r" {...ic} />]] : [])
+    .concat([['/perfil', 'Mi perfil', <UserRound key="p" {...ic} />]])
+  const nombre = [perfil.name, perfil.last_name].filter(Boolean).join(' ') || perfil.email
+
   return (
     <aside className="side" aria-label="Menú">
       <img src={grupo} alt="Grupo Friopacking" style={{ width: 180, height: 'auto', display: 'block', margin: '4px 0 6px 8px' }} />
       <nav className="nav" aria-label="Secciones">
-        {tabs.map(([k, l]) => (
-          <button key={k} className={'navb' + (tab === k ? ' on' : '')} aria-current={tab === k ? 'page' : undefined} onClick={() => onTab(k)}>
-            {ICONOS[k]}{l}
-          </button>
+        {items.map(([to, l, icono]) => (
+          <NavLink key={to} to={to} className={({ isActive }) => 'navb' + (isActive ? ' on' : '')}>{icono}{l}</NavLink>
         ))}
       </nav>
       {puedeEditar ? (
@@ -24,9 +29,9 @@ export default function Sidebar({ tab, onTab, perfil, esAdmin, puedeEditar, onNu
         </div>
       ) : <div style={{ marginTop: 'auto' }} />}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 8px' }}>
-        <span style={{ fontSize: 12, color: '#c9d3f2', wordBreak: 'break-all' }}>{perfil.email || ''}</span>
-        <span className="rolchip" style={{ alignSelf: 'flex-start' }}>{ROLES[perfil.rol] || ''}</span>
-        <span style={{ fontSize: 11, color: '#8f9fd4' }}>Datos guardados en la base de datos de Capital Humano.</span>
+        <span style={{ fontSize: 13, color: '#fff', fontWeight: 600, wordBreak: 'break-word' }}>{nombre}</span>
+        <span style={{ fontSize: 12, color: '#c9d3f2', wordBreak: 'break-all' }}>{perfil.email}</span>
+        <span className="rolchip" style={{ alignSelf: 'flex-start' }}>{rol}</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px' }}>
           <button className="slink" onClick={onSalir}>Cerrar sesión</button>
           {puedeEditar && <button className="slink" onClick={onRespaldo}>Descargar respaldo</button>}

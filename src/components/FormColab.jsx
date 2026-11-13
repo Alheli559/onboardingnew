@@ -5,7 +5,7 @@ import { IconClose } from './Icons'
 import Confirmar from './Confirmar'
 
 // Alta y edición de un colaborador (ingreso).
-export default function FormColab({ col, data, onClose, onGuardar, onBorrar }) {
+export default function FormColab({ col, data, puedeBorrar, onClose, onGuardar, onBorrar }) {
   const [f, setF] = useState(col ? { ...col } : { id: null, nombre: '', empresa: '', area: '', cargo: '', fechaIngreso: '' })
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
@@ -64,7 +64,7 @@ export default function FormColab({ col, data, onClose, onGuardar, onBorrar }) {
           <datalist id="dl-emp">{emps.map(o => <option key={o} value={o} />)}</datalist>
         </div>
         <div className="mfoot">
-          {f.id && <button className="btn danger" style={{ marginRight: 'auto' }} onClick={() => setConfirmando(true)}>Eliminar colaborador</button>}
+          {f.id && puedeBorrar && <button className="btn danger" style={{ marginRight: 'auto' }} onClick={() => setConfirmando(true)}>Eliminar colaborador</button>}
           <button className="btn" onClick={onClose}>Cancelar</button>
           <button className="btn pri" onClick={guardar} disabled={busy}>{busy ? 'Guardando…' : 'Guardar'}</button>
         </div>
