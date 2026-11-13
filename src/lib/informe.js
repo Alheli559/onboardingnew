@@ -114,8 +114,6 @@ export function documentoHTML(col, encuestas) {
       <div><span>Cargo</span><b>${esc(col.cargo || '—')}</b></div>
       <div class="dato-emp"><span>Empresa</span>${logoEmp || `<b>${esc(col.empresa || '—')}</b>`}</div>
       <div><span>Área</span><b>${esc(col.area || '—')}</b></div>
-      <div><span>DNI</span><b>${esc(col.dni || '—')}</b></div>
-      <div><span>Tipo de contrato</span><b>${esc(col.contrato || '—')}</b></div>
       <div><span>Fecha de ingreso</span><b>${esc(fmt(col.fechaIngreso))}</b></div>
       <div><span>Períodos completados</span><b>${encuestas.length} de 4</b></div>
     </div></div>
